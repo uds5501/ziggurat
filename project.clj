@@ -85,7 +85,6 @@
                                                                                                                    com.fasterxml.jackson.core/jackson-databind
                                                                                                                    com.fasterxml.jackson.core/jackson-annotations]]
                                            [org.apache.kafka/kafka-clients "3.7.0" :classifier "test" :exclusions [org.slf4j/slf4j-api]]
-                                           [org.apache.kafka/kafka-streams-test-utils "3.7.0" :classifier "test" :exclusions [org.lz4/lz4-java log4j org.slf4j/slf4j-log4j12 org.slf4j/slf4j-api]]
                                            [org.clojure/test.check "1.1.0"]]
                        :plugins           [[lein-cloverage "1.2.2" :exclusions [org.clojure/clojure]]]
                        :cloverage         {:exclude-call ['cambium.core/info
