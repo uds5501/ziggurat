@@ -27,7 +27,7 @@
           key          "message"
           value        "Hello World!!"]
       (send :default topic key value)
-      (let [result (IntegrationTestUtils/waitUntilMinKeyValueRecordsReceived *consumer-properties* topic 1 8000)]
+      (let [result (IntegrationTestUtils/waitUntilMinKeyValueRecordsReceived ^Properties *consumer-properties* topic 1 8000)]
         (is (= value (.value (first result))))))))
 
 (deftest send-data-with-topic-key-partition-and-value-test

@@ -243,12 +243,12 @@
                         :poll-timeout-ms-config        10000}
             props      (build-all-config-properties config-map)]
         (doall
-          (map (fn [[k _]]
-                 (let [string-key (str/replace (name k) #"-" ".")
-                       not-found  "NOT FOUND!"
-                       v          (.getProperty props string-key not-found)]
-                   (is (= v not-found))))
-               config-map))))
+         (map (fn [[k _]]
+                (let [string-key (str/replace (name k) #"-" ".")
+                      not-found  "NOT FOUND!"
+                      v          (.getProperty props string-key not-found)]
+                  (is (= v not-found))))
+              config-map))))
 
     (testing "should set ssl properties for streams if enabled is set to true"
       (with-redefs [ssl-config (constantly {:enabled               true

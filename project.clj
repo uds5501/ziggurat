@@ -34,6 +34,13 @@
                                                                       org.slf4j/slf4j-log4j12
                                                                       com.fasterxml.jackson.core/jackson-databind
                                                                       com.fasterxml.jackson.core/jackson-annotations]]
+                 [org.apache.kafka/kafka-streams "3.7.0" :classifier "test" :exclusions [log4j
+                                                                                         org.lz4/lz4-java
+                                                                                         org.slf4j/slf4j-api
+                                                                                         org.slf4j/slf4j-log4j12
+                                                                                         com.fasterxml.jackson.core/jackson-databind
+                                                                                         com.fasterxml.jackson.core/jackson-annotations]]
+                 [org.apache.kafka/kafka-clients "3.7.0" :classifier "test" :exclusions [org.lz4/lz4-java org.slf4j/slf4j-api]]
                  [org.clojure/clojure "1.10.3"]
                  [org.clojure/tools.logging "1.1.0"]
                  [nrepl/nrepl "0.8.3"]
@@ -77,6 +84,7 @@
                        :jvm-opts          ["-Dlogback.configurationFile=resources/logback.test.xml"]
                        :dependencies      [[com.google.protobuf/protobuf-java "3.17.0"]
                                            [junit/junit "4.13.2"]
+                                           [org.junit.jupiter/junit-jupiter-api "5.0.3"]
                                            [org.hamcrest/hamcrest-core "2.2"]
                                            [org.apache.kafka/kafka-streams "3.7.0" :classifier "test" :exclusions [log4j
                                                                                                                    org.lz4/lz4-java
@@ -84,7 +92,7 @@
                                                                                                                    org.slf4j/slf4j-log4j12
                                                                                                                    com.fasterxml.jackson.core/jackson-databind
                                                                                                                    com.fasterxml.jackson.core/jackson-annotations]]
-                                           [org.apache.kafka/kafka-clients "3.7.0" :classifier "test" :exclusions [org.slf4j/slf4j-api]]
+                                           [org.apache.kafka/kafka-clients "3.7.0" :classifier "test" :exclusions [org.lz4/lz4-java org.slf4j/slf4j-api]]
                                            [org.clojure/test.check "1.1.0"]]
                        :plugins           [[lein-cloverage "1.2.2" :exclusions [org.clojure/clojure]]]
                        :cloverage         {:exclude-call ['cambium.core/info
