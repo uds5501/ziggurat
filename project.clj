@@ -34,13 +34,6 @@
                                                                       org.slf4j/slf4j-log4j12
                                                                       com.fasterxml.jackson.core/jackson-databind
                                                                       com.fasterxml.jackson.core/jackson-annotations]]
-                 [org.apache.kafka/kafka-streams "3.7.0" :classifier "test" :exclusions [log4j
-                                                                                         org.lz4/lz4-java
-                                                                                         org.slf4j/slf4j-api
-                                                                                         org.slf4j/slf4j-log4j12
-                                                                                         com.fasterxml.jackson.core/jackson-databind
-                                                                                         com.fasterxml.jackson.core/jackson-annotations]]
-                 [org.apache.kafka/kafka-clients "3.7.0" :classifier "test" :exclusions [org.lz4/lz4-java org.slf4j/slf4j-api]]
                  [org.clojure/clojure "1.10.3"]
                  [org.clojure/tools.logging "1.1.0"]
                  [nrepl/nrepl "0.8.3"]

@@ -5,24 +5,24 @@
             [mount.core :as mount]
             [ziggurat.config :refer [-get
                                      -getIn
-                                     build-properties
                                      build-consumer-config-properties
-                                     build-streams-config-properties
                                      build-producer-config-properties
+                                     build-properties
+                                     build-streams-config-properties
                                      channel-retry-config
                                      config config-file
                                      config-from-env
                                      consumer-config-mapping-table
-                                     producer-config-mapping-table
-                                     streams-config-mapping-table
-                                     default-config get-in-config
+                                     create-jaas-properties
+                                     default-config
+                                     get-in-config producer-config-mapping-table
                                      rabbitmq-config
-                                     set-property
-                                     statsd-config
-                                     ziggurat-config
-                                     ssl-config
                                      sasl-config
-                                     create-jaas-properties]]
+                                     set-property
+                                     ssl-config
+                                     statsd-config
+                                     streams-config-mapping-table
+                                     ziggurat-config]]
             [ziggurat.fixtures :as f])
   (:import (java.util ArrayList Properties)))
 
@@ -397,7 +397,70 @@
               sasl-protocol      (.getProperty props "security.protocol")]
           (is (= auto-offset-reset "latest"))
           (is (= sasl-protocol "SASL_PLAINTEXT"))
-          (is (= sasl-jaas-config (create-jaas-properties "" "" "org.apache.kafka.common.security.scram.ScramLoginModule"))))))))
+          (is (= sasl-jaas-config (create-jaas-properties "" "" "org.apache.kafka.common.security.scram.ScramLoginModule"))))))
+    (testing "should set ssl properties with sasl elements if present"
+      (with-redefs [ssl-config (constantly {:enabled                 true
+                                            :ssl-keystore-location   "/some/location"
+                                            :ssl-keystore-password   "some-password"
+                                            :mechanism               "SCRAM-SHA-512"
+                                            :protocol                "SASL_SSL"
+                                            :login-callback-handler  "abc"
+                                            :ssl-truststore-location "/some/truststore/location"
+                                            :ssl-truststore-password "some-truststore-password"})]
+        (let [streams-config-map {:max-poll-records   500
+                                  :enable-auto-commit true}
+              props              (build-consumer-config-properties streams-config-map)
+              max-poll-records   (.getProperty props "max.poll.records")
+              enable-auto-commit (.getProperty props "enable.auto.commit")
+              ssl-ks-location    (.getProperty props "ssl.keystore.location")
+              ssl-ks-password    (.getProperty props "ssl.keystore.password")
+              ssl-ts-location    (.getProperty props "ssl.truststore.location")
+              ssl-ts-password    (.getProperty props "ssl.truststore.password")
+              protocol           (.getProperty props "security.protocol")
+              mechanism          (.getProperty props "sasl.mechanism")
+              login-callback     (.getProperty props "sasl.login.callback.handler.class")]
+          (is (= max-poll-records "500"))
+          (is (= enable-auto-commit "true"))
+          (is (= ssl-ks-location "/some/location"))
+          (is (= ssl-ks-password "some-password"))
+          (is (= ssl-ts-location "/some/truststore/location"))
+          (is (= ssl-ts-password "some-truststore-password"))
+          (is (= protocol "SASL_SSL"))
+          (is (= mechanism "SCRAM-SHA-512"))
+          (is (= login-callback "abc")))))
+    (testing "should set ssl properties overridden by sasl elements if present"
+      (with-redefs [ssl-config  (constantly {:enabled                 true
+                                             :ssl-keystore-location   "/some/location"
+                                             :ssl-keystore-password   "some-password"
+                                             :mechanism               "SCRAM-SHA-512"
+                                             :protocol                "SSL"
+                                             :ssl-truststore-location "/some/truststore/location"
+                                             :ssl-truststore-password "some-truststore-password"})
+                    sasl-config (constantly {:enabled                true
+                                             :protocol               "SASL_SSL"
+                                             :mechanism              "OAUTH"
+                                             :login-callback-handler "def"})]
+        (let [streams-config-map {:max-poll-records   500
+                                  :enable-auto-commit true}
+              props              (build-consumer-config-properties streams-config-map)
+              max-poll-records   (.getProperty props "max.poll.records")
+              enable-auto-commit (.getProperty props "enable.auto.commit")
+              ssl-ks-location    (.getProperty props "ssl.keystore.location")
+              ssl-ks-password    (.getProperty props "ssl.keystore.password")
+              ssl-ts-location    (.getProperty props "ssl.truststore.location")
+              ssl-ts-password    (.getProperty props "ssl.truststore.password")
+              protocol           (.getProperty props "security.protocol")
+              mechanism          (.getProperty props "sasl.mechanism")
+              login-callback     (.getProperty props "sasl.login.callback.handler.class")]
+          (is (= max-poll-records "500"))
+          (is (= enable-auto-commit "true"))
+          (is (= ssl-ks-location "/some/location"))
+          (is (= ssl-ks-password "some-password"))
+          (is (= ssl-ts-location "/some/truststore/location"))
+          (is (= ssl-ts-password "some-truststore-password"))
+          (is (= protocol "SASL_SSL"))
+          (is (= mechanism "OAUTH"))
+          (is (= login-callback "def")))))))
 
 (deftest test-set-property
   (testing "set-property with empty (with spaces) value"

@@ -6,8 +6,8 @@
             [mount.core :refer [defstate]]
             [ziggurat.util.java-util :as util])
   (:import (java.util Properties)
-           [org.apache.kafka.common.config SaslConfigs SslConfigs]
-           [org.apache.kafka.clients CommonClientConfigs])
+           (org.apache.kafka.clients CommonClientConfigs)
+           (org.apache.kafka.common.config SaslConfigs))
   (:gen-class
    :methods
    [^{:static true} [get [String] Object]
@@ -255,11 +255,12 @@
   (let [ssl-configs-enabled (:enabled ssl-config-map)
         jaas-config         (get ssl-config-map :jaas)
         mechanism           (get ssl-config-map :mechanism)
-        protocol            (get ssl-config-map :protocol)]
+        protocol            (get ssl-config-map :protocol)
+        login-callback-handler (get ssl-config-map :login-callback-handler)]
     (if (true? ssl-configs-enabled)
       (as-> properties pr
         (add-jaas-properties pr jaas-config)
-        (add-sasl-properties pr mechanism protocol)
+        (add-sasl-properties pr mechanism protocol login-callback-handler)
         (reduce-kv set-property-fn pr ssl-config-map))
       properties)))
 
