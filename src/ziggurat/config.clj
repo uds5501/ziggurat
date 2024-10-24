@@ -224,9 +224,9 @@
 
 (defn- add-sasl-properties
   [properties mechanism protocol login-callback-handler]
-  (when (some? mechanism) (.put properties SaslConfigs/SASL_MECHANISM mechanism))
-  (when (some? protocol) (.put properties CommonClientConfigs/SECURITY_PROTOCOL_CONFIG protocol))
-  (when (some? login-callback-handler) (.put properties SaslConfigs/SASL_LOGIN_CALLBACK_HANDLER_CLASS login-callback-handler))
+  (when (some? mechanism) (.putIfAbsent properties SaslConfigs/SASL_MECHANISM mechanism))
+  (when (some? protocol) (.putIfAbsent properties CommonClientConfigs/SECURITY_PROTOCOL_CONFIG protocol))
+  (when (some? login-callback-handler) (.putIfAbsent properties SaslConfigs/SASL_LOGIN_CALLBACK_HANDLER_CLASS login-callback-handler))
   properties)
 
 (defn build-ssl-properties

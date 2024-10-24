@@ -304,7 +304,7 @@
           (is (= ssl-ks-location "/some/location"))
           (is (= ssl-ks-password "some-password")))))
 
-    (testing "should not set ssl properties for streams if eenabled is set to false"
+    (testing "should not set ssl properties for streams if enabled is set to false"
       (with-redefs [ssl-config (constantly {:enabled               false
                                             :ssl-keystore-location "/some/location"
                                             :ssl-keystore-password "some-password"})]
@@ -427,40 +427,7 @@
           (is (= ssl-ts-password "some-truststore-password"))
           (is (= protocol "SASL_SSL"))
           (is (= mechanism "SCRAM-SHA-512"))
-          (is (= login-callback "abc")))))
-    (testing "should set ssl properties overridden by sasl elements if present"
-      (with-redefs [ssl-config  (constantly {:enabled                 true
-                                             :ssl-keystore-location   "/some/location"
-                                             :ssl-keystore-password   "some-password"
-                                             :mechanism               "SCRAM-SHA-512"
-                                             :protocol                "SSL"
-                                             :ssl-truststore-location "/some/truststore/location"
-                                             :ssl-truststore-password "some-truststore-password"})
-                    sasl-config (constantly {:enabled                true
-                                             :protocol               "SASL_SSL"
-                                             :mechanism              "OAUTH"
-                                             :login-callback-handler "def"})]
-        (let [streams-config-map {:max-poll-records   500
-                                  :enable-auto-commit true}
-              props              (build-consumer-config-properties streams-config-map)
-              max-poll-records   (.getProperty props "max.poll.records")
-              enable-auto-commit (.getProperty props "enable.auto.commit")
-              ssl-ks-location    (.getProperty props "ssl.keystore.location")
-              ssl-ks-password    (.getProperty props "ssl.keystore.password")
-              ssl-ts-location    (.getProperty props "ssl.truststore.location")
-              ssl-ts-password    (.getProperty props "ssl.truststore.password")
-              protocol           (.getProperty props "security.protocol")
-              mechanism          (.getProperty props "sasl.mechanism")
-              login-callback     (.getProperty props "sasl.login.callback.handler.class")]
-          (is (= max-poll-records "500"))
-          (is (= enable-auto-commit "true"))
-          (is (= ssl-ks-location "/some/location"))
-          (is (= ssl-ks-password "some-password"))
-          (is (= ssl-ts-location "/some/truststore/location"))
-          (is (= ssl-ts-password "some-truststore-password"))
-          (is (= protocol "SASL_SSL"))
-          (is (= mechanism "OAUTH"))
-          (is (= login-callback "def")))))))
+          (is (= login-callback "abc")))))))
 
 (deftest test-set-property
   (testing "set-property with empty (with spaces) value"
